@@ -141,5 +141,80 @@ def render_hires_unicode(avatar: tuple[str, str], mode: str) -> str:
     return "\n".join(out)
 
 
+
+# Full-frame mode uses the ORIGINAL square avatar: zero cropping, zero
+# subject masks, zero background suppression, and no fabricated pixels.
+# Keep the older face-focused renderer above as an optional mode.
+FULL_COLS = 112
+FULL_ROWS = 70
+FULL_LEFT = 43.0
+FULL_TOP = 208.0
+FULL_SIZE = 5.6
+FULL_LINE_HEIGHT = 5.05
+FULL_WIDTH = 350.0
+
+
+def render_full_photo_unicode(avatar: tuple[str, str], mode: str) -> str:
+    """Turn the COMPLETE GitHub picture, including scenery, into real text glyphs.
+
+    Two vertically independently colored half-block characters reproduce
+    every pixel of the source at an approximately square output aspect ratio.
+    No SVG <image> nodes are used; all original image areas are preserved.
+    """
+    mime, encoded = avatar
+    if mime not in ("image/jpeg", "image/png", "image/webp"):
+        raise ValueError("Avatar must be an image from GitHub")
+    source = base64.b64decode(encoded, validate=True)
+    decoded = subprocess.run(
+        ["ffmpeg", "-hide_banner", "-loglevel", "error",
+         "-i", "pipe:0", "-vf",
+         f"scale={FULL_COLS}:{FULL_ROWS * 2}:flags=lanczos,format=rgb24",
+         "-frames:v", "1", "-pix_fmt", "rgb24",
+         "-f", "rawvideo", "pipe:1"],
+        input=source, capture_output=True, check=True, timeout=40,
+    ).stdout
+    if len(decoded) != FULL_COLS * FULL_ROWS * 2 * 3:
+        raise RuntimeError("Could not decode the complete profile photograph")
+
+    font = "'DejaVu Sans Mono', 'Liberation Mono', Consolas, monospace"
+    out = [
+        f'<g id="portrait-full-frame-unicode" font-family="{font}" '
+        f'font-size="{FULL_SIZE}" font-weight="400" xml:space="preserve">',
+        '<title>Entire original GitHub photo as Unicode text, including '
+        'background, trees, grass, table and subject</title>',
+    ]
+    for y in range(FULL_ROWS):
+        upper = []
+        lower = []
+        for x in range(FULL_COLS):
+            px = FULL_LEFT + x * (FULL_WIDTH / FULL_COLS)
+            for part, target in ((0, upper), (1, lower)):
+                n = ((y * 2 + part) * FULL_COLS + x) * 3
+                r, g, b = decoded[n], decoded[n + 1], decoded[n + 2]
+                # Only gentle per-theme correction. Preserve the real
+                # colors of the photo and all scenery without masking.
+                if mode == "dark":
+                    r, g, b = (min(255, int(v * 1.015 + 4)) for v in (r, g, b))
+                else:
+                    r, g, b = (max(0, int(v * 0.965)) for v in (r, g, b))
+                fill = f"#{r:02x}{g:02x}{b:02x}"
+                symbol = "&#9600;" if part == 0 else "&#9604;"
+                target.append(
+                    f'<tspan x="{px:.2f}" fill="{fill}">{symbol}</tspan>'
+                )
+        baseline = FULL_TOP + y * FULL_LINE_HEIGHT
+        out.append(
+            f'<text x="{FULL_LEFT}" y="{baseline:.2f}">'
+            + "".join(upper) + "</text>"
+        )
+        out.append(
+            f'<text x="{FULL_LEFT}" y="{baseline:.2f}">'
+            + "".join(lower) + "</text>"
+        )
+    out.append("</g>")
+    return "\n".join(out)
+
+
+
 if __name__ == "__main__":
     raise SystemExit("Use render_hires_unicode(...) from build_profile.py")
