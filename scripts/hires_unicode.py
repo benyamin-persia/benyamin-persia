@@ -70,6 +70,10 @@ def _is_person(x: int, y: int) -> bool:
         sy >= 249
         and (203 - 0.60 * (sy - 249)) <= sx <= (362 + 0.46 * (sy - 249))
     )
+    # The source portrait has horizontal bands of bright grass behind the
+    # left edge of the head. Exclude that region without touching the face.
+    if sy < 243 and sx < 242:
+        return False
     return cap or face or neck or shoulders
 
 
