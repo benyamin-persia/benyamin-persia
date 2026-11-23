@@ -113,15 +113,14 @@ def render_hires_unicode(avatar: tuple[str, str], mode: str) -> str:
         for col in range(COLS):
             top = _ink(data, col, row * 2, mode)
             bot = _ink(data, col, row * 2 + 1, mode)
-            if top is None:
-                upper.append("&#160;")
-            else:
-                upper.append(f'<tspan fill="{top}">&#9600;</tspan>')
+            # Explicit coordinates prevent font-fallback glyph-width
+            # differences from distorting the face or shifting the eyes.
+            xpos = LEFT + col * (350.0 / COLS)
+            if top is not None:
+                upper.append(f'<tspan x="{xpos:.2f}" fill="{top}">&#9600;</tspan>')
                 num_glyphs += 1
-            if bot is None:
-                lower.append("&#160;")
-            else:
-                lower.append(f'<tspan fill="{bot}">&#9604;</tspan>')
+            if bot is not None:
+                lower.append(f'<tspan x="{xpos:.2f}" fill="{bot}">&#9604;</tspan>')
                 num_glyphs += 1
         baseline = TOP + row * LINE_HEIGHT
         # Both rows occupy the identical monospace cell coordinates.
