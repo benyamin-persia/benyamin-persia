@@ -29,7 +29,7 @@ def is_subject(x: int, y: int) -> bool:
 def main() -> None:
     config = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
     username = urllib.parse.quote(config["username"], safe="")
-    url = f"https://github.com/{username}.png?size=460"
+    url = config.get("avatar_url") or f"https://github.com/{username}.png?size=460"
     req = urllib.request.Request(url, headers={"User-Agent": "github-profile-ascii"})
     with urllib.request.urlopen(req, timeout=30) as response:
         avatar = response.read()
