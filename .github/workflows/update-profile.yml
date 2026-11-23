@@ -8,6 +8,7 @@ on:
       - config.json
       - portrait.txt
       - scripts/build_profile.py
+      - scripts/avatar_to_ascii.py
       - .github/workflows/update-profile.yml
   schedule:
     - cron: "17 7 * * *"
@@ -36,6 +37,14 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Refresh ASCII portrait from existing public GitHub photo
+        run: |
+          if command -v ffmpeg >/dev/null 2>&1; then
+            python scripts/avatar_to_ascii.py || echo "Avatar conversion failed; keeping the existing portrait."
+          else
+            echo "FFmpeg unavailable; keeping the existing portrait."
+          fi
+
       - name: Fetch live stats and regenerate both SVGs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -56,7 +65,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/dark_mode.svg assets/light_mode.svg
+          git add portrait.txt assets/dark_mode.svg assets/light_mode.svg
           if ! git diff --cached --quiet; then
             git commit -m "chore: refresh GitHub terminal profile stats"
             git push
