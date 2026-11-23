@@ -15,6 +15,8 @@ import sys
 import urllib.error
 import urllib.request
 
+from color_ascii import render_colored_ascii
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CONFIG = ROOT / "config.json"
 GRAPHQL_URL = "https://api.github.com/graphql"
@@ -148,7 +150,9 @@ def render(config: dict, portrait: list[str], stats: dict, mode: str, avatar: tu
     # Keep the original ASCII portrait option, but default to an exact photo.
     # The previously generated grayscale ASCII approximation did not retain
     # enough facial detail to be recognizable.
-    if config.get("portrait_style", "photo") == "photo" and avatar:
+    if config.get("portrait_style") == "color_ascii" and avatar:
+        out.append(render_colored_ascii(avatar, mode))
+    elif config.get("portrait_style", "photo") == "photo" and avatar:
         mime, encoded = avatar
         out.extend([
             '<defs><clipPath id="photo-clip"><rect x="45" y="166" width="345" height="367" rx="19"/></clipPath></defs>',
@@ -219,7 +223,11 @@ def main() -> None:
     config = json.loads(CONFIG.read_text(encoding="utf-8"))
     portrait_path = ROOT / config.get("portrait_file", "portrait.txt")
     portrait = portrait_path.read_text(encoding="utf-8").splitlines()
-    avatar = avatar_photo_data(config) if config.get("portrait_style", "photo") == "photo" else None
+    avatar = (
+        avatar_photo_data(config)
+        if config.get("portrait_style", "photo") in ("photo", "color_ascii")
+        else None
+    )
     token = os.environ.get("GITHUB_TOKEN", "").strip()
     if token:
         stats = github_stats(config["username"], token)
