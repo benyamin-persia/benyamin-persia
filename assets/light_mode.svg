@@ -84,7 +84,7 @@
 <text x="790" y="586" fill="#566b83" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14">STARS RECEIVED</text>
 <text x="1119" y="586" text-anchor="end" fill="#a15d13" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-weight="700" font-size="21">11</text>
 <text x="446" y="617" fill="#566b83" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14">COMMITS (12MO)</text>
-<text x="775" y="617" text-anchor="end" fill="#a15d13" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-weight="700" font-size="21">172</text>
+<text x="775" y="617" text-anchor="end" fill="#a15d13" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-weight="700" font-size="21">174</text>
 <text x="790" y="617" fill="#566b83" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14">FOLLOWERS</text>
 <text x="1119" y="617" text-anchor="end" fill="#a15d13" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-weight="700" font-size="21">9</text>
 <line x1="446" y1="639" x2="1147" y2="639" stroke="#becde1"/>
