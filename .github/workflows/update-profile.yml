@@ -1,0 +1,65 @@
+name: Refresh GitHub terminal profile
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - README.md
+      - config.json
+      - portrait.txt
+      - scripts/build_profile.py
+      - .github/workflows/update-profile.yml
+  schedule:
+    - cron: "17 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-profile-svg
+  cancel-in-progress: false
+
+jobs:
+  update:
+    name: Generate and publish terminal cards
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout profile repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch live stats and regenerate both SVGs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/build_profile.py
+
+      - name: Validate generated SVG XML
+        run: |
+          python - <<'PY'
+          import pathlib
+          import xml.etree.ElementTree as ET
+          for path in (pathlib.Path("assets/dark_mode.svg"), pathlib.Path("assets/light_mode.svg")):
+              tree = ET.parse(path)
+              assert tree.getroot().tag.endswith("svg"), f"Invalid SVG: {path}"
+              print("Valid:", path)
+          PY
+
+      - name: Commit changes only if the stats changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/dark_mode.svg assets/light_mode.svg
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: refresh GitHub terminal profile stats"
+            git push
+          else
+            echo "GitHub profile statistics are already current."
+          fi
