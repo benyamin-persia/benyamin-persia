@@ -84,8 +84,17 @@ def _ink(data: bytes, x: int, y: int, mode: str) -> str | None:
     # the dark blue/gray plaid jacket are intentionally retained.
     sx = (CROP_X + (x + 0.5) / COLS * CROP_W) * 460.0
     sy = (CROP_Y + (y + 0.5) / (ROWS * 2) * CROP_H) * 460.0
-    on_face = 205 <= sx <= 368 and 132 <= sy <= 267
-    if not on_face and g > 95 and g > r * 0.69 and g > b * 1.50:
+    on_face = 213 <= sx <= 363 and 131 <= sy <= 268
+    is_outdoor_yellow_green = (
+        g > 96
+        and (g > r * 0.91 or r > g * 0.98)
+        and g > b * 1.58
+    )
+    # Remove bright grass beyond the left ear while protecting the true
+    # brow, nose, mouth and cheeks; no pixels are fabricated or retouched.
+    if is_outdoor_yellow_green and (
+        not on_face or (sx < 230 and sy < 240)
+    ):
         return None
 
     if mode == "dark":
