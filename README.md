@@ -1,4 +1,4 @@
-# Ben `~/github`
+# Ben
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/benyamin-persia/benyamin-persia/main/assets/dark_mode.svg">
