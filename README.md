@@ -3,7 +3,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/benyamin-persia/benyamin-persia/main/assets/dark_mode.svg">
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/benyamin-persia/benyamin-persia/main/assets/light_mode.svg">
-  <img alt="Terminal-style GitHub profile card for Ben, with an ASCII portrait, software engineering information, and automatically updated GitHub statistics" src="https://raw.githubusercontent.com/benyamin-persia/benyamin-persia/main/assets/light_mode.svg" width="1200">
+  <img alt="Terminal-style GitHub profile card for Ben, with Ben's actual GitHub profile photo, software engineering information, and automatically updated GitHub statistics" src="https://raw.githubusercontent.com/benyamin-persia/benyamin-persia/main/assets/light_mode.svg" width="1200">
 </picture>
 
 <sub>Software engineering • automation • AI agents</sub>
@@ -14,7 +14,7 @@
 
 - **Two themes:** the card automatically follows the reader's GitHub dark/light theme.
 - **Editable details:** edit [`config.json`](./config.json) to change the displayed text.
-- **ASCII portrait:** edit [`portrait.txt`](./portrait.txt) to adjust the artwork.
+- **Authentic portrait:** the card embeds the original photo from your public GitHub profile, so your face is not invented by ASCII conversion. Set `portrait_style` to `ascii` in [`config.json`](./config.json) to use the original optional ASCII artwork from [`portrait.txt`](./portrait.txt).
 - **Live public GitHub stats:** [`scripts/build_profile.py`](./scripts/build_profile.py) uses GitHub GraphQL to count owned public repositories, stars they received, commit contributions over the last 12 months, and followers.
 - **Automatic refresh:** [GitHub Actions](./.github/workflows/update-profile.yml) refreshes the SVG cards daily and whenever the source files change. No separate secret or third-party Python package is required.
 
