@@ -80,13 +80,13 @@
 <line x1="446" y1="530" x2="1147" y2="530" stroke="#344761"/>
 <text x="446" y="557" fill="#67e8d3" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-weight="700" font-size="19">GitHub Stats</text>
 <text x="446" y="586" fill="#9bacc5" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14">REPOS</text>
-<text x="775" y="586" text-anchor="end" fill="#f3c879" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-weight="700" font-size="21">syncing</text>
+<text x="775" y="586" text-anchor="end" fill="#f3c879" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-weight="700" font-size="21">418</text>
 <text x="790" y="586" fill="#9bacc5" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14">STARS RECEIVED</text>
-<text x="1119" y="586" text-anchor="end" fill="#f3c879" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-weight="700" font-size="21">syncing</text>
+<text x="1119" y="586" text-anchor="end" fill="#f3c879" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-weight="700" font-size="21">11</text>
 <text x="446" y="617" fill="#9bacc5" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14">COMMITS (12MO)</text>
-<text x="775" y="617" text-anchor="end" fill="#f3c879" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-weight="700" font-size="21">syncing</text>
+<text x="775" y="617" text-anchor="end" fill="#f3c879" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-weight="700" font-size="21">172</text>
 <text x="790" y="617" fill="#9bacc5" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14">FOLLOWERS</text>
-<text x="1119" y="617" text-anchor="end" fill="#f3c879" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-weight="700" font-size="21">syncing</text>
+<text x="1119" y="617" text-anchor="end" fill="#f3c879" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-weight="700" font-size="21">9</text>
 <line x1="446" y1="639" x2="1147" y2="639" stroke="#344761"/>
 <text x="446" y="659" fill="#9bacc5" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="13">Build. Automate. Learn. Repeat.</text>
 </svg>
