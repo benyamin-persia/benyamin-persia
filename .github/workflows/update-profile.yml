@@ -10,6 +10,7 @@ on:
       - scripts/build_profile.py
       - scripts/avatar_to_ascii.py
       - scripts/color_ascii.py
+      - scripts/hires_unicode.py
       - .github/workflows/update-profile.yml
   schedule:
     - cron: "17 7 * * *"
