@@ -6,6 +6,7 @@ Personal text lives in config.json; ASCII artwork lives in portrait.txt.
 """
 from __future__ import annotations
 
+import base64
 import html
 import json
 import os
@@ -101,7 +102,26 @@ def github_stats(login: str, token: str) -> dict[str, int]:
     return {"repos": repos, "stars": stars, "commits": commits, "followers": followers}
 
 
-def render(config: dict, portrait: list[str], stats: dict, mode: str) -> str:
+def avatar_photo_data(config: dict) -> tuple[str, str] | None:
+    """Load the user's exact public GitHub avatar, not a generated approximation."""
+    url = config.get("avatar_url")
+    if not url:
+        return None
+    request = urllib.request.Request(
+        url,
+        headers={"User-Agent": "benyamin-persia-profile-card"},
+    )
+    with urllib.request.urlopen(request, timeout=30) as response:
+        mime = response.headers.get_content_type()
+        if mime not in ("image/png", "image/jpeg", "image/webp"):
+            raise RuntimeError(f"Unexpected GitHub avatar content type: {mime}")
+        raw = response.read(2_000_001)
+    if not 100 < len(raw) <= 2_000_000:
+        raise RuntimeError("Public avatar is empty or unexpectedly large")
+    return (mime, base64.b64encode(raw).decode("ascii"))
+
+
+def render(config: dict, portrait: list[str], stats: dict, mode: str, avatar: tuple[str, str] | None = None) -> str:
     p = PALETTES[mode]
     font = "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace"
     out = [
@@ -125,12 +145,28 @@ def render(config: dict, portrait: list[str], stats: dict, mode: str) -> str:
         f'<line x1="446" y1="178" x2="1147" y2="178" stroke="{p["border"]}"/>',
     ])
 
-    # SVG text instead of an image keeps the ASCII art sharp in both color themes.
-    for i, line in enumerate(portrait[:39]):
-        out.append(
-            f'<text xml:space="preserve" x="45" y="{150 + i * 12.15:.2f}" '
-            f'fill="{p["portrait"]}" font-family="{font}" font-size="10.2">{xml(line)}</text>'
-        )
+    # Keep the original ASCII portrait option, but default to an exact photo.
+    # The previously generated grayscale ASCII approximation did not retain
+    # enough facial detail to be recognizable.
+    if config.get("portrait_style", "photo") == "photo" and avatar:
+        mime, encoded = avatar
+        out.extend([
+            '<defs><clipPath id="photo-clip"><rect x="45" y="166" width="345" height="367" rx="19"/></clipPath></defs>',
+            f'<rect x="40" y="161" width="355" height="377" rx="23" fill="{p["header"]}" stroke="{p["accent"]}" stroke-width="2"/>',
+            f'<image x="45" y="166" width="345" height="367" clip-path="url(#photo-clip)" preserveAspectRatio="xMidYMid slice" href="data:{mime};base64,{encoded}"/>',
+            f'<rect x="45" y="490" width="345" height="43" fill="{p["header"]}" opacity="0.93" clip-path="url(#photo-clip)"/>',
+            f'<text x="61" y="516" fill="{p["accent"]}" font-family="{font}" font-size="16">GITHUB // ORIGINAL PHOTO</text>',
+            f'<text x="50" y="566" fill="{p["muted"]}" font-family="{font}" font-size="14">Photo from @{xml(config["username"])}</text>',
+            f'<path d="M52 587 H385" stroke="{p["border"]}" stroke-width="1"/>',
+            f'<text x="50" y="615" fill="{p["secondary"]}" font-family="{font}" font-size="15">\u003e profile --authentic</text>',
+        ])
+    else:
+        # Preserved original text-based avatar rendering, for ASCII mode.
+        for i, line in enumerate(portrait[:39]):
+            out.append(
+                f'<text xml:space="preserve" x="45" y="{150 + i * 12.15:.2f}" '
+                f'fill="{p["portrait"]}" font-family="{font}" font-size="10.2">{xml(line)}</text>'
+            )
 
     values = [
         ("Role", config["role"]),
@@ -183,6 +219,7 @@ def main() -> None:
     config = json.loads(CONFIG.read_text(encoding="utf-8"))
     portrait_path = ROOT / config.get("portrait_file", "portrait.txt")
     portrait = portrait_path.read_text(encoding="utf-8").splitlines()
+    avatar = avatar_photo_data(config) if config.get("portrait_style", "photo") == "photo" else None
     token = os.environ.get("GITHUB_TOKEN", "").strip()
     if token:
         stats = github_stats(config["username"], token)
@@ -195,7 +232,7 @@ def main() -> None:
     assets.mkdir(parents=True, exist_ok=True)
     for mode in ("dark", "light"):
         destination = assets / (mode + "_mode.svg")
-        destination.write_text(render(config, portrait, stats, mode), encoding="utf-8")
+        destination.write_text(render(config, portrait, stats, mode, avatar), encoding="utf-8")
         print("Updated", destination.relative_to(ROOT))
     print("Stats:", stats)
 
