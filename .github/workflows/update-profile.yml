@@ -39,11 +39,11 @@ jobs:
 
       - name: Refresh ASCII portrait from existing public GitHub photo
         run: |
-          if command -v ffmpeg >/dev/null 2>&1; then
-            python scripts/avatar_to_ascii.py || echo "Avatar conversion failed; keeping the existing portrait."
-          else
-            echo "FFmpeg unavailable; keeping the existing portrait."
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends ffmpeg
           fi
+          python scripts/avatar_to_ascii.py || echo "Avatar conversion failed; keeping the existing portrait."
 
       - name: Fetch live stats and regenerate both SVGs
         env:
