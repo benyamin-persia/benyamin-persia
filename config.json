@@ -14,5 +14,7 @@
   "footer": "Build. Automate. Learn. Repeat.",
   "portrait_file": "portrait.txt",
   "avatar_url": "https://avatars.githubusercontent.com/u/35182026?v=4",
-  "portrait_style": "photo"
+  "portrait_style": "color_ascii",
+  "ascii_columns": 104,
+  "ascii_rows": 90
 }
