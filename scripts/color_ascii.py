@@ -28,7 +28,7 @@ def _rgb_matrix(avatar: tuple[str, str]) -> bytes:
     command = [
         "ffmpeg", "-hide_banner", "-loglevel", "error", "-i", "pipe:0",
         "-vf",
-        f"crop=iw*0.69:ih*0.88:iw*0.15:ih*0.055,"
+        f"crop=iw*0.49:ih*0.66:iw*0.37:ih*0.115,"
         f"scale={COLS}:{ROWS}:flags=lanczos,format=rgb24",
         "-frames:v", "1", "-pix_fmt", "rgb24",
         "-f", "rawvideo", "pipe:1",
@@ -53,18 +53,18 @@ def _subject(x: int, y: int) -> bool:
     jacket is what makes the ASCII rendering recognizable.
     """
     # Approximate point in the underlying 460x460 public avatar.
-    sx = (0.15 + (x + 0.5) / COLS * 0.69) * 460
-    sy = (0.055 + (y + 0.5) / ROWS * 0.88) * 460
+    sx = (0.37 + (x + 0.5) / COLS * 0.49) * 460
+    sy = (0.115 + (y + 0.5) / ROWS * 0.66) * 460
 
-    cap = ((sx - 235) / 89) ** 2 + ((sy - 111) / 62) ** 2 <= 1.0 and sy <= 144
-    head = ((sx - 234) / 84) ** 2 + ((sy - 175) / 91) ** 2 <= 1.0 and sy >= 120
-    neck = 205 <= sx <= 279 and 242 <= sy <= 285
+    cap = ((sx - 279) / 77) ** 2 + ((sy - 103) / 58) ** 2 <= 1.0 and sy <= 148
+    head = ((sx - 280) / 78) ** 2 + ((sy - 177) / 87) ** 2 <= 1.0 and sy >= 111
+    neck = 242 <= sx <= 320 and 244 <= sy <= 285
 
-    if sy >= 235:
+    if sy >= 252:
         # Coat/shoulders widen into the bottom of the composition.
-        progress = min(1.0, max(0.0, (sy - 238) / 105))
-        left = 150 - 95 * progress
-        right = 321 + 90 * progress
+        progress = min(1.0, max(0.0, (sy - 252) / 104))
+        left = 210 - 48 * progress
+        right = 355 + 70 * progress
         torso = left <= sx <= right
     else:
         torso = False
