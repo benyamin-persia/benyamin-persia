@@ -16,6 +16,7 @@ import urllib.error
 import urllib.request
 
 from color_ascii import render_colored_ascii
+from hires_unicode import render_hires_unicode
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CONFIG = ROOT / "config.json"
@@ -150,7 +151,9 @@ def render(config: dict, portrait: list[str], stats: dict, mode: str, avatar: tu
     # Keep the original ASCII portrait option, but default to an exact photo.
     # The previously generated grayscale ASCII approximation did not retain
     # enough facial detail to be recognizable.
-    if config.get("portrait_style") == "color_ascii" and avatar:
+    if config.get("portrait_style") == "hires_unicode" and avatar:
+        out.append(render_hires_unicode(avatar, mode))
+    elif config.get("portrait_style") == "color_ascii" and avatar:
         out.append(render_colored_ascii(avatar, mode))
     elif config.get("portrait_style", "photo") == "photo" and avatar:
         mime, encoded = avatar
@@ -225,7 +228,7 @@ def main() -> None:
     portrait = portrait_path.read_text(encoding="utf-8").splitlines()
     avatar = (
         avatar_photo_data(config)
-        if config.get("portrait_style", "photo") in ("photo", "color_ascii")
+        if config.get("portrait_style", "photo") in ("photo", "color_ascii", "hires_unicode")
         else None
     )
     token = os.environ.get("GITHUB_TOKEN", "").strip()
