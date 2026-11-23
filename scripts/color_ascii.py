@@ -84,10 +84,15 @@ def render_colored_ascii(avatar: tuple[str, str], mode: str) -> str:
         glyphs = []
         for x in range(COLS):
             if not _subject(x, y):
-                glyphs.append(" ")
+                glyphs.append("\u00a0")
                 continue
             p = (y * COLS + x) * 3
             r, g, b = pixels[p], pixels[p + 1], pixels[p + 2]
+            # Reject yellow/green scenery even when it falls inside the
+            # loose silhouette. Skin, cap and navy checked jacket remain.
+            if g > b * 1.66 and g > r * 0.61:
+                glyphs.append("\u00a0")
+                continue
             # Luma determines actual text character; image RGB supplies the ink.
             luma = 0.2126 * r + 0.7152 * g + 0.0722 * b
             idx = min(len(RAMP) - 1, int(luma / 255 * len(RAMP)))
@@ -102,7 +107,7 @@ def render_colored_ascii(avatar: tuple[str, str], mode: str) -> str:
             ink = f"#{r:02x}{g:02x}{b:02x}"
             glyphs.append(f'<tspan fill="{ink}">{html.escape(char)}</tspan>')
         out.append(
-            f'<text x="44" y="{154 + y * 5.31:.2f}">' + "".join(glyphs) + "</text>"
+            f'<text xml:space="preserve" x="44" y="{154 + y * 5.31:.2f}">' + "".join(glyphs) + "</text>"
         )
     out.append("</g>")
     return "\n".join(out)
