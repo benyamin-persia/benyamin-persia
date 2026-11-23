@@ -63,7 +63,7 @@ def _is_person(x: int, y: int) -> bool:
     sx = (CROP_X + (x + 0.5) / COLS * CROP_W) * 460.0
     sy = (CROP_Y + (y + 0.5) / (ROWS * 2) * CROP_H) * 460.0
 
-    cap = ((sx - 268) / 93) ** 2 + ((sy - 103) / 57) ** 2 <= 1.0 and sy < 143
+    cap = ((sx - 273) / 84) ** 2 + ((sy - 103) / 58) ** 2 <= 1.0 and sy < 144
     face = ((sx - 281) / 88) ** 2 + ((sy - 181) / 99) ** 2 <= 1.0 and sy >= 109
     neck = 231 <= sx <= 328 and 245 <= sy <= 287
     shoulders = (
@@ -82,7 +82,10 @@ def _ink(data: bytes, x: int, y: int, mode: str) -> str | None:
 
     # The yellow-green outdoor background is removed, but brown skin and
     # the dark blue/gray plaid jacket are intentionally retained.
-    if g > 95 and g > r * 0.69 and g > b * 1.50:
+    sx = (CROP_X + (x + 0.5) / COLS * CROP_W) * 460.0
+    sy = (CROP_Y + (y + 0.5) / (ROWS * 2) * CROP_H) * 460.0
+    on_face = 205 <= sx <= 368 and 132 <= sy <= 267
+    if not on_face and g > 95 and g > r * 0.69 and g > b * 1.50:
         return None
 
     if mode == "dark":
